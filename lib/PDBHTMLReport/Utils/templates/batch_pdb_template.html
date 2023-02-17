@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/molstar@3.27.0/build/viewer/molstar.min.css" />
+    <title>Protein Structures with Mol* Viewer</title>
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* Responsive columns */
+        @media screen and (max-width: 600px) {
+          .column {
+            width: 100%;
+            display: block;
+            margin-bottom: 20px;
+          }
+        }
+
+        /* Style the tab */
+        .tab {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 0px 0px;
+          -webkit-animation: fadeEffect 1s;
+          animation: fadeEffect 1s;
+          border-top: none;
+        }
+
+        /* Style the subtab content */
+        .subtabcontent {
+          display: none;
+          padding: 10px 12px;
+          -webkit-animation: fadeEffect 1s;
+          animation: fadeEffect 1s;
+          border: 2px solid #ccc;
+          border-top: none;
+          background-color: #ccc;
+        }
+
+        /* Fade in tabs */
+        @-webkit-keyframes fadeEffect {
+          from {opacity: 0;}
+          to {opacity: 1;}
+        }
+
+        @keyframes fadeEffect {
+          from {opacity: 0;}
+          to {opacity: 1;}
+        }
+
+        /* Embed the viewer */
+        .app {
+          position: relative;
+          left: 0px;
+          top: 0px;
+          width: auto;
+          height: 600px;
+        }
+    </style>
+
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+    <script>
+      $(document).ready( function () {
+          $('#pdbs').DataTable();
+      });
+  </script>
+</head>
+<body>
+  <!-- Tab links -->
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'StructureInfo')" id="defaultOpen">Structure Info</button>
+    <button class="tablinks" onclick="openTab(event, 'StructureViewer')" id="molstarviewer">Structure Viewer</button>
+  </div>
+
+  <!-- Begin Tab content1 -->
+  <div id="StructureInfo" class="tabcontent">
+    <!--Begin PDBs successfully uploaded-->
+    <h2>Protein structures successfully uploaded</h2>
+    <table id="pdbs" class="display" style="width: 100%;">
+        <thead>
+            <tr>
+              <th>Structure</th>
+              <th>Genome</th>
+              <th>Feature</th>
+              <th>Model and chain matching feature</th>
+              <th>Sequence identity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--replace uploaded pdbs tbody-->
+        </tbody>
+    </table>
+    <!--End PDBs successfully uploaded-->
+  </div>
+  <!-- End Tab content1 -->
+
+  <!-- Begin Tab content2 -->
+  <div id="StructureViewer" class="tabcontent">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/molstar@3.27.0/build/viewer/molstar.min.js"></script>
+      <!--replace StructureViewer subtabs-->
+      <!--Begin Sub Tab content-->
+      <!--replace subtab content multi-->
+      <!--replace subtab content single-->
+      <!--End Sub Tab content-->
+  </div>
+  <!-- End Tab content2 -->
+
+  <!--Managing tab states -->
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    function openSubTab(evt, subtab, fromSubmenu=true) {
+      var i, subtabcontents, subtablinks, subtabName;
+      if (typeof subtab.name === 'undefined')
+          subtabName = subtab.textContent;
+      else
+          subtabName = subtab.id.replace("_sub", "");
+      //alert("Inside openSubTab: " + subtabName + " is clicked!");
+
+      subtabcontents = document.getElementsByClassName("subtabcontent");
+      for (i = 0; i < subtabcontents.length; i++) {
+        subtabcontents[i].style.display = "none";
+      }
+      subtablinks = document.getElementsByClassName("subtablinks");
+      for (i = 0; i < subtablinks.length; i++) {
+        subtablinks[i].className = subtablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(subtabName).style.display = "block";
+      if (!fromSubmenu) {
+        document.getElementById("molstarviewer").click();
+        document.getElementById(subtabName+ "_sub").className += " active";
+      } else {
+        evt.currentTarget.className += " active";
+      }
+    }
+
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+    // Set the element to be the default clicked one
+    document.getElementById("AllStructures_sub").click();
+  </script>
+</body>
+</html>
