@@ -63,5 +63,42 @@ class PDBHTMLReportTest(unittest.TestCase):
         #
         # Check returned data with
         # self.assertEqual(ret[...], ...) or other unittest methods
-        ret = self.serviceImpl.run_PDBHTMLReport(self.ctx, {'workspace_name': self.wsName,
-                                                             'parameter_1': 'Hello World!'})
+        pdb_infos = [{
+            'structure_name': '6TUK',
+            'file_extension': '.pdb',
+            'narrative_id': 63679,
+            'genome_name': 'MLuteus_ATCC_49442',
+            'feature_id': 'MLuteus_masurca_RAST.CDS.133',
+            'is_model': 1,
+            'from_rcsb': 1,
+            'file_path': os.path.join('/kb/module/test/data', '6TUK.pdb.gz'),
+            'genome_ref': '63679/38/1',  # for appdev
+            # 'genome_ref': '107138/2/1',  # for prod
+            'feature_type': 'gene',
+            'sequence_identities': '68.93%',
+            'chain_ids': 'Model 1.Chain B',
+            'model_ids': '0',
+            'exact_matches': '0',
+            'scratch_path': os.path.join('/kb/module/test/data', '6TUK.pdb.gz')
+        }, {
+            'structure_name': 'MLuteus_AlphaFold_3483',
+            'file_extension': '.pdb',
+            'narrative_id': 63679,
+            'genome_name': 'MLuteus_ATCC_49442',
+            'feature_id': 'MLuteus_masurca_RAST.CDS.3483',
+            'is_model': 1,
+            'from_rcsb': 0,
+            'file_path': os.path.join('/kb/module/test/data', 'MLuteus_AlphaFold_3483.pdb'),
+            'genome_ref': '63679/38/1',  # for appdev
+            # 'genome_ref': '107138/2/1',  # for prod
+            'feature_type': 'gene',
+            'sequence_identities': '99.99%',
+            'chain_ids': 'Model 1.Chain B',
+            'model_ids': '0',
+            'exact_matches': '1',
+            'scratch_path': os.path.join('/kb/module/test/data', 'MLuteus_AlphaFold_3483.pdb')
+        }]
+        ret = self.serviceImpl.run_PDBHTMLReport(self.ctx, pdb_infos)
+        self.assertTrue(ret[0]['report_html'])
+        self.assertTrue(ret[0]['doms'])
+        print(ret[0]['report_html'])

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <!--link rel="icon" href="./favicon.ico" type="image/x-icon"-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/molstar@3.27.0/build/viewer/molstar.min.css" />
     <title>Protein Structures with Mol* Viewer</title>
     <style>
@@ -99,7 +99,7 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
     <script>
       $(document).ready( function () {
-          $('#pdbs').DataTable();
+          $("#pdbs").DataTable();
       });
   </script>
 </head>
@@ -161,11 +161,11 @@
 
     function openSubTab(evt, subtab, fromSubmenu=true) {
       var i, subtabcontents, subtablinks, subtabName;
-      if (typeof subtab.name === 'undefined')
+      if (typeof subtab.name === "undefined")
           subtabName = subtab.textContent;
       else
           subtabName = subtab.id.replace("_sub", "");
-      //alert("Inside openSubTab: " + subtabName + " is clicked!");
+      /*alert("Inside openSubTab: " + subtabName + " is clicked!");*/
 
       subtabcontents = document.getElementsByClassName("subtabcontent");
       for (i = 0; i < subtabcontents.length; i++) {
@@ -184,9 +184,9 @@
       }
     }
 
-    // Get the element with id="defaultOpen" and click on it
+    /* Get the element with id="defaultOpen" and click on it*/
     document.getElementById("defaultOpen").click();
-    // Set the element to be the default clicked one
+    /* Set the element to be the default clicked one */
     document.getElementById("AllStructures_sub").click();
   </script>
 </body>
