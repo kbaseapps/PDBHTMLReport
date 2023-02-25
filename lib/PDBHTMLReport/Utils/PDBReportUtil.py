@@ -5,21 +5,8 @@ import uuid
 import shutil
 from urllib.parse import urlparse
 
-from installed_clients.DataFileUtilClient import DataFileUtil
-from installed_clients.WorkspaceClient import Workspace
-
 
 class PDBReportUtil:
-
-    def _validate_html_report_params(self, params):
-        """
-            _validate_html_report_params:
-                validates params passed to generate_html_report method
-        """
-        # check for required parameters
-        for p in ['pdb_infos', 'workspace_name']:
-            if p not in params:
-                raise ValueError(f'Parameter "{p}" is required, but missing')
 
     def _config_viewer(self, div_id):
         """
@@ -63,7 +50,7 @@ class PDBReportUtil:
             if pdb.get('from_rcsb', False):
                 continue
             file_path = pdb['file_path']
-            file_ext = pdb['file_extension']
+            file_ext = pdb['file_extension'].replace('.', '')
             if file_ext == 'cif':
                 file_ext = 'mmcif'
             base_filename = os.path.basename(file_path)
@@ -110,7 +97,7 @@ class PDBReportUtil:
             if not default_click:
                 default_click = f'{struct_nm}_sub'
             file_path = pdb['file_path']
-            file_ext = pdb['file_extension']
+            file_ext = pdb['file_extension'].replace('.', '')
             if file_ext == 'cif':
                 file_ext = 'mmcif'
 
@@ -195,8 +182,6 @@ class PDBReportUtil:
         self.callback_url = config['SDK_CALLBACK_URL']
         self.scratch = config['scratch']
         self.token = config['KB_AUTH_TOKEN']
-        self.dfu = DataFileUtil(self.callback_url)
-        self.ws_client = Workspace(config['workspace-url'])
         self.shock_url = config['shock-url']
         self.download_dir = None
         self.__baseDownloadUrl = 'https://files.rcsb.org/download'
@@ -229,6 +214,9 @@ class PDBReportUtil:
             }]
             return: an html string
         """
+        if not pdb_infos:
+            raise ValueError(f'pdb_infos is required!')
+
         # Make report directory for writing and copying over uploaded pdb files
         output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
         os.mkdir(output_directory)
