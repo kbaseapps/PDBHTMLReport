@@ -1,9 +1,10 @@
 import logging
 import os
-import sys
 import uuid
 import shutil
 from urllib.parse import urlparse
+
+from installed_clients.DataFileUtilClient import DataFileUtil
 
 
 class PDBReportUtil:
@@ -183,17 +184,16 @@ class PDBReportUtil:
         self.scratch = config['scratch']
         self.token = config['KB_AUTH_TOKEN']
         self.shock_url = config['shock-url']
+        self.dfu = DataFileUtil(self.callback_url)
         self.download_dir = None
         self.__baseDownloadUrl = 'https://files.rcsb.org/download'
 
-    # def generate_html_report(self, pdb_infos):
-    def generate_html_report(self, pdb_infos):
+    def get_pdb_infos(self, params):
         """
-            generate_html_report: generates the HTML for the report by 
-            1. call _validate_html_report_params to validate input params
-            2. generate a report in html
+            get_pdb_infos: call dfu.get_objects to return pdb_infos
 
-            input pdb_infos is actually pdb_infos, which is a list of of the following structure,
+            From input params['protein_structures_ref'] fetch pdb_infos, which is expected to be
+            a list of of the following structure,
             e.g.,
             pdb_infos = [{
                 'structure_name': '6TUK',
@@ -212,10 +212,27 @@ class PDBReportUtil:
                 'exact_matches': '0',
                 'scratch_path': os.path.join('/kb/module/test/data', '6TUK.pdb.gz')
             }]
-            return: an html string
         """
+        if 'protein_structures_ref' not in params:
+            raise ValueError('Variable "protein_structures_ref" is required!')
+
+        obj = self.dfu.get_objects({"object_refs": [params["protein_structures_ref"]]})['data'][0]
+        return obj['data'].get('pdb_infos', [])
+
+    def generate_html_report(self, params):
+        """
+            generate_html_report: generates the HTML for the report by calling
+            _write_structure_info, _write_viewer_content_single, _write_viewer_content_single
+            & _write_viewer_content_multi to generate a report in html and a few DOM sections
+            return: the html report and the pdb_infos
+        """
+        if 'protein_structures_ref' not in params:
+            raise ValueError('Variable "protein_structures_ref" is required!')
+
+        pdb_infos = self.get_pdb_infos(params)
+
         if not pdb_infos:
-            raise ValueError(f'pdb_infos is required!')
+            return {}
 
         # Make report directory for writing and copying over uploaded pdb files
         output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
@@ -253,10 +270,13 @@ class PDBReportUtil:
             html_report = html_report.replace('\\', '')
             html_report = html_report.replace('\n', '')
 
-        return {'report_html': html_report,
-                'doms': {
-                    'table_content': tbody_html,
-                    'viewer_tabs': viewer_tabs,
-                    'single_structures': single_viewer,
-                    'all_structures': multi_viewer
-                }}
+            """
+            doms = {
+                'table_content': tbody_html,
+                'viewer_tabs': viewer_tabs,
+                'single_structures': single_viewer,
+                'all_structures': multi_viewer
+            }
+            """
+
+        return {'report_html': html_report}

@@ -338,6 +338,10 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
+        self.rpc_service.add(impl_PDBHTMLReport.get_PDBInfos,
+                             name='PDBHTMLReport.get_PDBInfos',
+                             types=[dict])
+        self.method_authentication['PDBHTMLReport.get_PDBInfos'] = 'required'  # noqa
         self.rpc_service.add(impl_PDBHTMLReport.run_PDBHTMLReport,
                              name='PDBHTMLReport.run_PDBHTMLReport',
                              types=[dict])
