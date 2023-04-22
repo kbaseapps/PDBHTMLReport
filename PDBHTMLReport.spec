@@ -31,7 +31,7 @@ module PDBHTMLReport {
     /*
         This function accepts PDBHTMLInput as input parameters and returns an object pdf_infos 
     */
-    funcdef get_PDBInfos(PDBHTMLInput params) returns (UnspecifiedObject output) authentication required;
+    funcdef get_PDBInfos(PDBHTMLInput params) returns (list<UnspecifiedObject> output) authentication required;
 
     /*
         This function accepts PDBHTMLInput as input parameters and returns an output in a PDBHTMLReport
