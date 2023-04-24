@@ -4,7 +4,7 @@ import uuid
 import shutil
 from urllib.parse import urlparse
 
-from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.WorkspaceClient import Workspace as workspaceService
 
 
 class PDBReportUtil:
@@ -179,12 +179,21 @@ class PDBReportUtil:
 
         return tbody_html
 
-    def __init__(self, config):
-        self.callback_url = config['SDK_CALLBACK_URL']
+    def _retrieve_object(self, obj_ref):
+        logging.info('Start retrieving object {}'.format(obj_ref))
+        obj_source = self.wsClient.get_objects2(
+            {"objects": [{'ref': obj_ref}]})['data'][0]
+
+        obj_info = obj_source.get('info')
+        obj_data = obj_source.get('data')
+
+        return obj_info, obj_data
+
+    def __init__(self, config, context):
+        self.ws_url = config["workspace-url"]
+        self.wsClient = workspaceService(self.ws_url, token=context['token'])
         self.scratch = config['scratch']
-        self.token = config['KB_AUTH_TOKEN']
         self.shock_url = config['shock-url']
-        self.dfu = DataFileUtil(self.callback_url)
         self.download_dir = None
         self.__baseDownloadUrl = 'https://files.rcsb.org/download'
 
@@ -216,8 +225,8 @@ class PDBReportUtil:
         if 'protein_structures_ref' not in params:
             raise ValueError('Variable "protein_structures_ref" is required!')
 
-        obj = self.dfu.get_objects({"object_refs": [params["protein_structures_ref"]]})['data'][0]
-        return obj['data'].get('pdb_infos', [])
+        obji, objd = self._retrieve_object(params["protein_structures_ref"])
+        return objd.get('pdb_infos', [])
 
     def generate_html_report(self, params):
         """

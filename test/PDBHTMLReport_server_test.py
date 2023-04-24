@@ -44,12 +44,14 @@ class PDBHTMLReportTest(unittest.TestCase):
         cls.ws_id = cls.wsClient.create_workspace({'workspace': cls.wsName})[0]
         cls.scratch = cls.cfg['scratch']
         cls.dfu = DataFileUtil(cls.callback_url)
-        cls.prepare_structures_object()
+        # cls.prepare_structures_object()
 
     # save the proteinstructures object and return a ref for test the apps in this module
     @classmethod
     def prepare_structures_object(cls):
-        """Saving (by dfu) a well-defined KBaseStructure.ProteinStructures"""
+        """Saving (by dfu) a well-defined KBaseStructure.ProteinStructures
+           using appdev objects
+        """
 
         cls.pdb_infos = [{
             'structure_name': '6TUK',
@@ -175,7 +177,7 @@ class PDBHTMLReportTest(unittest.TestCase):
         pass
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    def test_get_PDBInfos(self):
+    def _get_PDBInfos_1(self):
         #
         # Run your method by
         # ret = self.getImpl().your_method(self.getContext(), parameters...)
@@ -186,7 +188,93 @@ class PDBHTMLReportTest(unittest.TestCase):
             self.ctx, {'protein_structures_ref': self.structs_ref})
         self.assertEqual(ret_pdb_infos[0], self.pdb_infos)
 
-    def test_run_PDBHTMLReport(self):
+    def test_get_PDBInfos_2(self):
+        # Using CI objects
+        expected_pdbinfos1 = [{
+            'chain_ids': 'Model 1.Chain A,Model 1.Chain B',
+            'exact_matches': '0,0',
+            'feature_id': 'JCVISYN3_0004',
+            'feature_type': 'gene',
+            'file_extension': 'pdb',
+            'file_path': '6ifs.pdb',
+            'from_rcsb': 0,
+            'genome_name': 'Synthetic_bacterium_JCVI_Syn3_genome',
+            'genome_ref': '62713/17/1',
+            'is_model': 1,
+            'model_ids': '0,0',
+            'narrative_id': 62713,
+            'scratch_path': '/kb/module/work/tmp/3385594d-365a-4b07-9ae8-7b252ae5a73a/6ifs.pdb',
+            'sequence_identities': '67.95%,67.74%',
+            'structure_name': '6ifs'
+          }, {
+            'chain_ids': 'Model 1.Chain A',
+            'exact_matches': '0',
+            'feature_id': 'JCVISYN3_0004',
+            'feature_type': 'gene',
+            'file_extension': 'pdb',
+            'from_rcsb': 0,
+            'file_path': '6ift.pdb',
+            'genome_name': 'Synthetic_bacterium_JCVI_Syn3_genome',
+            'genome_ref': '62713/17/1',
+            'is_model': 1,
+            'model_ids': '0',
+            'narrative_id': 62713,
+            'scratch_path': '/kb/module/work/tmp/09d936a7-1efc-4bd0-9929-151e6d437c39/6ift.pdb',
+            'sequence_identities': '67.95%',
+            'structure_name': '6ift'
+          }, {
+            'chain_ids': 'Model 1.Chain A,Model 1.Chain B',
+            'exact_matches': '0,0',
+            'feature_id': 'JCVISYN3_0004',
+            'feature_type': 'gene',
+            'file_extension': 'pdb',
+            'from_rcsb': 0,
+            'file_path': '6ifw.pdb',
+            'genome_name': 'Synthetic_bacterium_JCVI_Syn3_genome',
+            'genome_ref': '62713/17/1',
+            'is_model': 1,
+            'model_ids': '0,0',
+            'narrative_id': 62713,
+            'scratch_path': '/kb/module/work/tmp/1f25a4de-8b73-4550-8d56-c777d54e04ca/6ifw.pdb',
+            'sequence_identities': '67.11%,67.18%',
+            'structure_name': '6ifw'
+          }]
+
+        ret_pdb_infos1 = self.serviceImpl.get_PDBInfos(
+            self.ctx, {'protein_structures_ref': '67759/37/1'})
+        self.assertEqual(ret_pdb_infos1[0], expected_pdbinfos1)
+
+        expected_pdbinfos2 = [{
+            'chain_ids': 'Model 1.Chain A,Model 1.Chain B',
+            'exact_matches': '0,0', 'feature_id': 'JCVISYN3_0004',
+            'feature_type': 'gene', 'file_extension': 'pdb',
+            'file_name': '6ifs.pdb', 'from_rcsb': 0,
+            'genome_name': 'Synthetic_bacterium_JCVI_Syn3_genome',
+            'genome_ref': '62713/17/1', 'is_model': 1, 'model_ids': '0,0',
+            'narrative_id': 62713,
+            'scratch_path': '/kb/module/work/tmp/2e158ead-2809-4f4d-9f91-d0929f885272/6ifs.pdb',
+            'sequence_identities': '67.95%,67.74%', 'structure_name': '6ifs'
+          }, {
+            'chain_ids': 'Model 1.Chain A', 'exact_matches': '0', 'feature_id': 'JCVISYN3_0004',
+            'feature_type': 'gene', 'file_extension': 'pdb', 'file_name': '6ift.pdb', 'from_rcsb': 0,
+            'genome_name': 'Synthetic_bacterium_JCVI_Syn3_genome', 'genome_ref': '62713/17/1',
+            'is_model': 1, 'model_ids': '0', 'narrative_id': 62713,
+            'scratch_path': '/kb/module/work/tmp/e9bb0caf-8499-4630-874c-e9f357c2586d/6ift.pdb',
+            'sequence_identities': '67.95%', 'structure_name': '6ift'
+          }, {'chain_ids': 'Model 1.Chain A,Model 1.Chain B', 'exact_matches': '0,0',
+              'feature_id': 'JCVISYN3_0004', 'feature_type': 'gene', 'file_extension': 'pdb',
+              'file_name': '6ifw.pdb', 'from_rcsb': 0,
+              'genome_name': 'Synthetic_bacterium_JCVI_Syn3_genome', 'genome_ref': '62713/17/1',
+              'is_model': 1, 'model_ids': '0,0', 'narrative_id': 62713,
+              'scratch_path': '/kb/module/work/tmp/8f94c7eb-4fe8-414d-9c39-57e5c8f99417/6ifw.pdb',
+              'sequence_identities': '67.11%,67.18%', 'structure_name': '6ifw'
+          }]
+
+        ret_pdb_infos2 = self.serviceImpl.get_PDBInfos(
+            self.ctx, {'protein_structures_ref': '67759/38/1'})
+        self.assertEqual(ret_pdb_infos2[0], expected_pdbinfos2)
+
+    def run_PDBHTMLReport(self):
         ret = self.serviceImpl.run_PDBHTMLReport(
             self.ctx, {'protein_structures_ref': self.structs_ref})
         self.assertTrue(ret[0]['report_html'])

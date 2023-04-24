@@ -37,8 +37,6 @@ class PDBHTMLReport:
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
         self.config = config
-        self.config['SDK_CALLBACK_URL'] = os.environ['SDK_CALLBACK_URL']
-        self.config['KB_AUTH_TOKEN'] = os.environ['KB_AUTH_TOKEN']
 
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
@@ -57,7 +55,7 @@ class PDBHTMLReport:
         # return variables are: output
         #BEGIN get_PDBInfos
         self.config['USER_ID'] = ctx['user_id']
-        self.pdb_report_util = PDBReportUtil(self.config)
+        self.pdb_report_util = PDBReportUtil(self.config, ctx)
 
         output = self.pdb_report_util.get_pdb_infos(params)
         #END get_PDBInfos
